@@ -34,10 +34,7 @@ const sortedTimelinePhases = computed(() => {
 <template>
   <Header />
   <main>
-    <HeroSection />
-    <AboutSection />
-    <ServicesSection />
-    <TimelineSection />
+    <router-view />
   </main>
   <Footer />
 </template>

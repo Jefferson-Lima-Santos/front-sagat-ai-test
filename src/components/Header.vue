@@ -35,8 +35,8 @@ onUnmounted(() => {
         />
       </router-link>
       <div class="header-actions">
-        <button class="header-btn login">{{ t(tokens.header.login) }}</button>
-        <button class="header-btn signup">{{ t(tokens.header.signup) }}</button>
+        <router-link to="/login" class="header-btn login">{{ t(tokens.header.login) }}</router-link>
+        <router-link to="/register" class="header-btn signup">{{ t(tokens.header.signup) }}</router-link>
         <LanguageSwitch />
       </div>
     </div>
@@ -89,6 +89,8 @@ onUnmounted(() => {
   padding: 0.5rem 1.1rem;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
 }
 
 .header-btn.login {

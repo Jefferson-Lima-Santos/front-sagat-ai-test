@@ -58,7 +58,7 @@ function changeLanguage(code: string) {
 <style scoped>
 .language-switch {
   position: relative;
-  display: inline-block;
+  display: flex;
 }
 .lang-btn {
   background: none;

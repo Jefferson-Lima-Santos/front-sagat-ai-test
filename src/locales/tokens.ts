@@ -74,6 +74,35 @@ export const tokens = {
     login: 'header.login',
     signup: 'header.signup'
   },
+  auth: {
+    register: {
+      title: 'auth.register.title',
+      subtitle: 'auth.register.subtitle',
+      fullName: 'auth.register.fullName',
+      fullNamePlaceholder: 'auth.register.fullNamePlaceholder',
+      email: 'auth.register.email',
+      emailPlaceholder: 'auth.register.emailPlaceholder',
+      password: 'auth.register.password',
+      passwordPlaceholder: 'auth.register.passwordPlaceholder',
+      confirmPassword: 'auth.register.confirmPassword',
+      confirmPasswordPlaceholder: 'auth.register.confirmPasswordPlaceholder',
+      submit: 'auth.register.submit',
+      submitting: 'auth.register.submitting',
+      alreadyHaveAccount: 'auth.register.alreadyHaveAccount',
+      login: 'auth.register.login',
+      success: 'auth.register.success',
+      successMessage: 'auth.register.successMessage'
+    },
+    validation: {
+      nameRequired: 'auth.validation.nameRequired',
+      emailRequired: 'auth.validation.emailRequired',
+      nameLength: 'auth.validation.nameLength',
+      invalidEmail: 'auth.validation.invalidEmail',
+      passwordRequired: 'auth.validation.passwordRequired',
+      passwordLength: 'auth.validation.passwordLength',
+      passwordMatch: 'auth.validation.passwordMatch'
+    }
+  },
   footer: {
     company: 'footer.company',
     about: 'footer.about',
@@ -86,5 +115,12 @@ export const tokens = {
     faq: 'footer.faq',
     contact: 'footer.contact',
     allRightsReserved: 'footer.allRightsReserved'
+  },
+  admin: {
+    dashboard: 'admin.dashboard',
+    welcome: 'admin.welcome',
+    welcomeMessage: 'admin.welcomeMessage',
+    logout: 'admin.logout',
+    profile: 'admin.profile'
   }
 };
