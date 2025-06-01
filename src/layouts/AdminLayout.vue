@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import AdminNavbar from '../components/admin/AdminNavbar.vue'
-import { useAuthStore } from '../stores/auth'
-import { useRouter } from 'vue-router'
-import { onMounted } from 'vue'
+import AdminNavbar from '../components/admin/AdminNavbar.vue';
+import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 
-const authStore = useAuthStore()
-const router = useRouter()
+const authStore = useAuthStore();
+const router = useRouter();
 
 onMounted(() => {
   if (!authStore.isAuthenticated) {
-    router.push('/login')
+    router.push('/login');
   }
-})
+});
 </script>
 
 <template>

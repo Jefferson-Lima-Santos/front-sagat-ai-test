@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { authApi, type SignUpRequest, type SignUpResponse } from '../api/auth'
-import apiClient from '../api/client'
+import type { SignUpRequest, SignUpResponse } from '../api/auth'
+import { authApi } from '../api/auth'
 
 export const useAuthStore = defineStore('auth', () => {
     const token = ref<string | null>(null)
@@ -22,8 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
         error.value = null
 
         try {
-            const response = await authApi.signUp(userData)
-            const data: SignUpResponse = response
+            const data = await authApi.signUp(userData)
 
             if (data.success) {
                 token.value = data.token

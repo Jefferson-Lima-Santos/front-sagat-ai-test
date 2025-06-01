@@ -13,7 +13,6 @@ const isSubmitting = ref(false)
 const showPassword = ref(false)
 const registrationSuccess = ref(false)
 
-// Schema de validação com Yup
 const schema = yup.object({
   fullName: yup.string()
     .required(t(tokens.auth.validation.nameRequired))
@@ -29,7 +28,6 @@ const schema = yup.object({
     .oneOf([yup.ref('password')], t(tokens.auth.validation.passwordMatch))
 })
 
-// Usar o hook do vee-validate com yup
 const { handleSubmit, values, errors, defineField } = useForm({
   validationSchema: schema,
   initialValues: {
@@ -40,26 +38,19 @@ const { handleSubmit, values, errors, defineField } = useForm({
   }
 })
 
-// Definir campos para o v-model
 const [fullName, fullNameProps] = defineField('fullName')
 const [email, emailProps] = defineField('email')
 const [password, passwordProps] = defineField('password')
 const [confirmPassword, confirmPasswordProps] = defineField('confirmPassword')
 
-// Função para lidar com o envio do formulário
 const onSubmit = handleSubmit(async (values) => {
   isSubmitting.value = true
   
   try {
-    // Simulando uma chamada API
     await new Promise(resolve => setTimeout(resolve, 1500))
     
-    console.log('Form submitted successfully:', values)
-    
-    // Se tudo der certo, mostra sucesso
     registrationSuccess.value = true
     
-    // Redirecionaria para login após alguns segundos
     setTimeout(() => {
       router.push('/login')
     }, 3000)
@@ -70,7 +61,6 @@ const onSubmit = handleSubmit(async (values) => {
   }
 })
 
-// Alterna visibilidade da senha
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
@@ -89,8 +79,6 @@ const togglePasswordVisibility = () => {
           <p>{{ t(tokens.auth.register.subtitle) }}</p>
         </div>
       </Motion>
-
-      <!-- Mensagem de sucesso -->
       <Motion v-if="registrationSuccess"
         :initial="{ opacity: 0, scale: 0.9 }"
         :animate="{ opacity: 1, scale: 1 }"
@@ -101,15 +89,12 @@ const togglePasswordVisibility = () => {
         <h2>{{ t(tokens.auth.register.success) }}</h2>
         <p>{{ t(tokens.auth.register.successMessage) }}</p>
       </Motion>
-
-      <!-- Formulário -->
       <Motion v-else
         :initial="{ opacity: 0 }"
         :animate="{ opacity: 1 }"
         :transition="{ duration: 0.5, delay: 0.2 }"
       >
         <form @submit.prevent="onSubmit" class="register-form">
-          <!-- Nome Completo -->
           <div class="form-group">
             <label for="fullName">{{ t(tokens.auth.register.fullName) }}</label>
             <input 
@@ -123,7 +108,6 @@ const togglePasswordVisibility = () => {
             <p v-if="errors.fullName" class="error-message">{{ errors.fullName }}</p>
           </div>
 
-          <!-- Email -->
           <div class="form-group">
             <label for="email">{{ t(tokens.auth.register.email) }}</label>
             <input 
@@ -137,7 +121,6 @@ const togglePasswordVisibility = () => {
             <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
           </div>
 
-          <!-- Senha -->
           <div class="form-group">
             <label for="password">{{ t(tokens.auth.register.password) }}</label>
             <div class="password-input-wrapper">
@@ -168,7 +151,6 @@ const togglePasswordVisibility = () => {
             <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
           </div>
 
-          <!-- Confirmar Senha -->
           <div class="form-group">
             <label for="confirmPassword">{{ t(tokens.auth.register.confirmPassword) }}</label>
             <div class="password-input-wrapper">
@@ -184,7 +166,6 @@ const togglePasswordVisibility = () => {
             <p v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</p>
           </div>
 
-          <!-- Botão de Envio -->
           <button 
             type="submit" 
             class="submit-btn" 

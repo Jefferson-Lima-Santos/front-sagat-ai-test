@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import { tokens } from '../locales/tokens'
-import { Motion } from 'motion-v'
+import { useI18n } from 'vue-i18n';
+import { tokens } from '../locales/tokens';
+import { Motion } from 'motion-v';
+import { useAuthStore } from '../stores/auth';
 
-const { t } = useI18n()
+const { t } = useI18n();
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -23,7 +25,7 @@ const { t } = useI18n()
     >
       <div class="welcome-card">
         <div class="welcome-content">
-          <h2>{{ t(tokens.admin.welcome) }}</h2>
+          <h2>{{ t(tokens.admin.welcome) }}, {{ authStore.user?.name || 'Usuário' }}</h2>
           <p>{{ t(tokens.admin.welcomeMessage) }}</p>
         </div>
       </div>

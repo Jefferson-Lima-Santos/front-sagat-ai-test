@@ -1,34 +1,44 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { tokens } from '../../locales/tokens'
-import { useAuthStore } from '../../stores/auth'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { tokens } from '../../locales/tokens';
+import { useAuthStore } from '../../stores/auth';
+import { useRouter } from 'vue-router';
 
-const { t } = useI18n()
-const authStore = useAuthStore()
-const router = useRouter()
+const { t } = useI18n();
+const authStore = useAuthStore();
+const router = useRouter();
 
-const isDropdownOpen = ref(false)
+const isDropdownOpen = ref(false);
 
 const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value
-}
+  isDropdownOpen.value = !isDropdownOpen.value;
+};
 
 const closeDropdown = () => {
-  isDropdownOpen.value = false
-}
+  isDropdownOpen.value = false;
+};
 
 const handleLogout = () => {
-  authStore.logout()
-  router.push('/login')
-}
-const dropdownRef = ref<HTMLDivElement | null>(null)
-document.addEventListener('click', (event) => {
+  authStore.logout();
+  router.push('/login');
+};
+
+const dropdownRef = ref<HTMLDivElement | null>(null);
+
+const handleClickOutside = (event: MouseEvent) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
-    closeDropdown()
+    closeDropdown();
   }
-})
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <template>

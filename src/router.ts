@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from './views/HomeView.vue'
-import RegisterView from './views/RegisterView.vue'
-import AdminView from './views/AdminView.vue'
-import AdminLayout from './layouts/AdminLayout.vue'
+const HomeView = () => import('./views/HomeView.vue')
+const RegisterView = () => import('./views/RegisterView.vue')
+const AdminView = () => import('./views/AdminView.vue')
+const AdminLayout = () => import('./layouts/AdminLayout.vue')
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.VITE_BASE_URL),
   routes: [
     {
       path: '/',
