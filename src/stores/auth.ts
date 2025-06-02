@@ -3,6 +3,8 @@ import { ref, computed, watch } from 'vue'
 import type { SignUpRequest, LoginRequest, UserInfo } from '../api/auth'
 import { authApi } from '../api/auth'
 import { setupInterceptors } from '../api/client'
+import { tokens } from '@/locales/tokens'
+import { i18n } from '@/locales/i18n'
 
 const loadFromStorage = (key: string) => {
   const item = localStorage.getItem(key)
@@ -16,6 +18,39 @@ const loadFromStorage = (key: string) => {
 
 const saveToStorage = (key: string, data: any) => {
   localStorage.setItem(key, JSON.stringify(data))
+}
+
+const showToast = {
+  success(message: string) {
+    window.dispatchEvent(new CustomEvent('show-toast', {
+      detail: {
+        severity: 'success',
+        summary: i18n.global.t(tokens.common.success),
+        detail: message,
+        life: 3000
+      }
+    }))
+  },
+  error(message: string) {
+    window.dispatchEvent(new CustomEvent('show-toast', {
+      detail: {
+        severity: 'error',
+        summary: i18n.global.t(tokens.common.error),
+        detail: message,
+        life: 5000
+      }
+    }))
+  },
+  info(message: string) {
+    window.dispatchEvent(new CustomEvent('show-toast', {
+      detail: {
+        severity: 'info',
+        summary: i18n.global.t(tokens.common.info),
+        detail: message,
+        life: 3000
+      }
+    }))
+  }
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -116,7 +151,6 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
 
     try {
-      console.log('Iniciando login:', { email: credentials.email })
       const loginData: LoginRequest = {
         user: {
           email: credentials.email,
@@ -140,9 +174,9 @@ export const useAuthStore = defineStore('auth', () => {
         
         try {
           await fetchUserInfo()
-          console.log('User info loaded:', user.value)
+          showToast.success(i18n.global.t(tokens.auth.login.loginSuccess))
         } catch (infoError) {
-          console.error('Failed to load user info, but login was successful:', infoError)
+          console.error('Failed to load user info:', infoError)
         }
 
         return true
@@ -150,8 +184,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       return false
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Credenciais inválidas'
+      const errorMessage = err.response?.data?.message || i18n.global.t(tokens.auth.login.invalidCredentials)
       error.value = errorMessage
+      showToast.error(errorMessage)
       throw new Error(errorMessage)
     } finally {
       loading.value = false
@@ -167,6 +202,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('tokenExpiration')
     localStorage.removeItem('user')
     
+    showToast.info(i18n.global.t(tokens.auth.logout.logoutSuccess))
   }
 
   function initializeFromStorage() {

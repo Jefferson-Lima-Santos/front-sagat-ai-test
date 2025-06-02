@@ -1,10 +1,11 @@
 <script setup lang="ts">
-// Removidos os imports dos componentes que agora são gerenciados pelos layouts
+import Toast from 'primevue/toast';
 </script>
 
 <template>
   <v-app>
     <router-view />
+    <Toast position="top-right" />
   </v-app>
 </template>
 

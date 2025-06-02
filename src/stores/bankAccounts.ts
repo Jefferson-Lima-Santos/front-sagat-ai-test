@@ -39,7 +39,7 @@ export const useBankAccountsStore = defineStore('bankAccounts', () => {
     error.value.transfers = null
 
     try {
-      const response = await bankAccountsApi.getTransfers(perPage)
+      const response = await bankAccountsApi.getTransfers({ per_page: perPage, page: 1 })
       recentTransfers.value = response.bank_account_transfers
       return response.bank_account_transfers
     } catch (err: any) {

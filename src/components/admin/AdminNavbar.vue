@@ -3,7 +3,7 @@ import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tokens } from '../../locales/tokens';
 import { useAuthStore } from '../../stores/auth';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useDisplay } from 'vuetify';
 import FlagPTBR from '@/assets/flags/flag-pt-br.png'
 import FlagUK from '@/assets/flags/flag-uk.png'
@@ -12,6 +12,7 @@ import FlagUK from '@/assets/flags/flag-uk.png'
 const { t, locale } = useI18n();
 const authStore = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 const { smAndDown } = useDisplay();
 
 const drawer = ref(!smAndDown.value);
@@ -46,7 +47,8 @@ const toggleDrawer = () => {
 };
 
 const navigationItems = [
-  { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/admin' },
+  { title: t(tokens.admin.dashboard), icon: 'mdi-view-dashboard', to: '/admin' },
+  { title: t(tokens.admin.statements.title), icon: 'mdi-bank-transfer', to: '/admin/statements' },
 ];
 
 const languages = [
@@ -61,6 +63,10 @@ const changeLanguage = (langCode: string) => {
 
 const getCurrentLanguage = () => {
   return languages.find(lang => lang.code === locale.value) || languages[0];
+};
+
+const isRouteActive = (path: string) => {
+  return route.path === path || (path !== '/admin' && route.path.startsWith(path));
 };
 </script>
 
@@ -152,9 +158,14 @@ const getCurrentLanguage = () => {
         :value="item"
         :to="item.to"
         color="primary"
+        :active="isRouteActive(item.to)"
+        :class="{ 'text-medium-emphasis': !isRouteActive(item.to) }"
       >
         <template v-slot:prepend>
-          <v-icon :icon="item.icon"></v-icon>
+          <v-icon 
+            :icon="item.icon" 
+            :class="{ 'text-medium-emphasis': !isRouteActive(item.to) }"
+          ></v-icon>
         </template>
 
         <v-list-item-title v-text="item.title"></v-list-item-title>

@@ -1,5 +1,11 @@
 export const tokens = {
   common: {
+    sessionExpired: 'common.sessionExpired',
+    pleaseLogin: 'common.pleaseLogin',
+    success: 'common.success',
+    error: 'common.error',
+    warning: 'common.warning',
+    info: 'common.info'
   },
   sections: {
   },
@@ -104,7 +110,11 @@ export const tokens = {
       forgotPassword: 'auth.login.forgotPassword',
       noAccount: 'auth.login.noAccount',
       signUp: 'auth.login.signUp',
-      invalidCredentials: 'auth.login.invalidCredentials'
+      invalidCredentials: 'auth.login.invalidCredentials',
+      loginSuccess: 'auth.login.loginSuccess',
+    },
+    logout: {
+      logoutSuccess: 'auth.logout.logoutSuccess',
     },
     validation: {
       nameRequired: 'auth.validation.nameRequired',
@@ -161,6 +171,31 @@ export const tokens = {
       invalidAmount: 'admin.bankTransfer.invalidAmount',
       insufficientFunds: 'admin.bankTransfer.insufficientFunds',
       transferFailed: 'admin.bankTransfer.transferFailed'
+    },
+    statements: {
+      title: 'admin.statements.title',
+      startDate: 'admin.statements.startDate',
+      endDate: 'admin.statements.endDate',
+      minValue: 'admin.statements.minValue',
+      maxValue: 'admin.statements.maxValue',
+      transferType: 'admin.statements.transferType',
+      applyFilters: 'admin.statements.applyFilters',
+      clearFilters: 'admin.statements.clearFilters',
+      all: 'admin.statements.all',
+      sent: 'admin.statements.sent',
+      received: 'admin.statements.received',
+      fromAccount: 'admin.statements.fromAccount',
+      toAccount: 'admin.statements.toAccount',
+      successful: 'admin.statements.successful',
+      failed: 'admin.statements.failed',
+      noTransfers: 'admin.statements.noTransfers',
+      noMoreData: 'admin.statements.noMoreData'
     }
+  },
+  notFound: {
+    title: 'notFound.title',
+    message: 'notFound.message',
+    goHome: 'notFound.goHome',
+    goBack: 'notFound.goBack'
   }
 };

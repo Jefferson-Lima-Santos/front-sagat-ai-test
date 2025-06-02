@@ -63,15 +63,43 @@ export interface CreateTransferResponse {
   message: string
 }
 
+export interface TransferFilters {
+  start_date?: string
+  end_date?: string
+  min_value?: number
+  max_value?: number
+  transfer_type?: 'sent' | 'received' | ''
+  per_page?: number
+  page?: number
+}
+
 export const bankAccountsApi = {
   getMyAccounts: async (): Promise<BankAccountsResponse> => {
     const response = await apiClient.get('/v1/users/bank_accounts/my')
     return response.data
   },
 
-  getTransfers: async (perPage: number = 3, page: number = 1): Promise<BankAccountTransfersResponse> => {
+  getTransfers: async (filters: TransferFilters = {}): Promise<BankAccountTransfersResponse> => {
+    const { 
+      per_page = 3, 
+      page = 1,
+      start_date,
+      end_date,
+      min_value,
+      max_value,
+      transfer_type 
+    } = filters
+    
     const response = await apiClient.get('/v1/users/bank_account_transfers/statements', {
-      params: { per_page: perPage, page }
+      params: { 
+        per_page, 
+        page,
+        start_date,
+        end_date,
+        min_value,
+        max_value,
+        transfer_type
+      }
     })
     return response.data
   },

@@ -3,6 +3,8 @@ const HomeView = () => import('./views/HomeView.vue')
 const RegisterView = () => import('./views/RegisterView.vue')
 const LoginView = () => import('./views/LoginView.vue')
 const AdminView = () => import('./views/AdminView.vue')
+const StatementView = () => import('./views/StatementView.vue')
+const NotFoundView = () => import('./views/NotFoundView.vue')
 const AdminLayout = () => import('./layouts/AdminLayout.vue')
 const DefaultLayout = () => import('./layouts/DefaultLayout.vue')
 
@@ -38,8 +40,18 @@ const router = createRouter({
           path: '',
           name: 'admin',
           component: AdminView
+        },
+        {
+          path: 'statements',
+          name: 'statements',
+          component: StatementView
         }
       ]
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: NotFoundView
     }
   ]
 })
