@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import type { SignUpRequest, LoginRequest } from '../api/auth'
+import type { SignUpRequest, LoginRequest, UserInfo } from '../api/auth'
 import { authApi } from '../api/auth'
+import { setupInterceptors } from '../api/client'
 
 const loadFromStorage = (key: string) => {
   const item = localStorage.getItem(key)
@@ -20,10 +21,12 @@ const saveToStorage = (key: string, data: any) => {
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(loadFromStorage('token'))
   const tokenExpiration = ref<number | null>(loadFromStorage('tokenExpiration'))
-  const user = ref<{ name?: string; email?: string } | null>(loadFromStorage('user'))
+  const user = ref<UserInfo | null>(loadFromStorage('user'))
   
   const loading = ref(false)
   const error = ref<string | null>(null)
+
+  setupInterceptors(() => token.value)
 
   const isAuthenticated = computed(() => {
     if (!token.value || !tokenExpiration.value) return false
@@ -57,6 +60,20 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }, { deep: true })
 
+  async function fetchUserInfo() {
+    try {
+      const response = await authApi.getUserInfo()
+      if (response && response.user) {
+        user.value = response.user
+        saveToStorage('user', response.user)
+      }
+      return response.user
+    } catch (err) {
+      console.error('Error fetching user info:', err)
+      return null
+    }
+  }
+
   async function registerUser(userData: SignUpRequest) {
     loading.value = true
     error.value = null
@@ -70,7 +87,16 @@ export const useAuthStore = defineStore('auth', () => {
 
         user.value = {
           name: userData.user.name,
-          email: userData.user.email
+          email: userData.user.email,
+          uid: '',
+          created_at: '',
+          updated_at: ''
+        }
+        
+        try {
+          await fetchUserInfo()
+        } catch (infoError) {
+          console.error('Failed to load user info after registration:', infoError)
         }
 
         return true
@@ -106,6 +132,17 @@ export const useAuthStore = defineStore('auth', () => {
 
         user.value = {
           email: credentials.email,
+          name: '',
+          uid: '',
+          created_at: '',
+          updated_at: ''
+        }
+        
+        try {
+          await fetchUserInfo()
+          console.log('User info loaded:', user.value)
+        } catch (infoError) {
+          console.error('Failed to load user info, but login was successful:', infoError)
         }
 
         return true
@@ -154,6 +191,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     registerUser,
     login,
-    logout
+    logout,
+    fetchUserInfo
   }
 })

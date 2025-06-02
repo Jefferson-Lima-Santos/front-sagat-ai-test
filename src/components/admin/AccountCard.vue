@@ -121,11 +121,11 @@ const formattedAccountNumber = computed(() => {
           
           <v-list-item-subtitle>
             <span v-if="transfer.was_success">
-              {{ isOutgoingTransfer(transfer) ? t('admin.bankAccount.to') : t('admin.bankAccount.from') }}
+              {{ isOutgoingTransfer(transfer) ? t(tokens.admin.bankAccount.to) : t(tokens.admin.bankAccount.from) }}
               {{ isOutgoingTransfer(transfer) ? transfer.to_bank_account.holder_name : transfer.from_user_bank_account.holder_name }}
             </span>
             <span v-else class="text-error text-caption">
-              {{ t('admin.bankAccount.transferFailed') }}
+              {{ t(tokens.admin.bankAccount.transferFailed) }}
             </span>
           </v-list-item-subtitle>
           
@@ -146,7 +146,7 @@ const formattedAccountNumber = computed(() => {
           prepend-icon="mdi-bank-transfer-out"
           @click="emit('new-transfer', account)"
         >
-          {{ t('admin.bankTransfer.newTransfer') }}
+          {{ t(tokens.admin.bankTransfer.newTransfer) }}
         </v-btn>
       </div>
     </v-card-text>

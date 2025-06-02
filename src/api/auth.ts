@@ -1,6 +1,5 @@
 import apiClient from './client'
 
-// Types
 export interface SignUpRequest {
   user: {
     name: string
@@ -22,25 +21,31 @@ export interface AuthResponse {
   exp: number
 }
 
-// Auth API service
+export interface UserInfo {
+  uid: string
+  name: string
+  email: string
+  created_at: string
+  updated_at: string
+}
+
+export interface UserInfoResponse {
+  user: UserInfo
+}
+
 export const authApi = {
-  /**
-   * Register a new user
-   * @param data User registration data
-   * @returns Promise with the registration response
-   */
   signUp: async (data: SignUpRequest): Promise<AuthResponse> => {
     const response = await apiClient.post('/v1/auth/sign_up', data)
     return response.data
   },
 
-  /**
-   * Login user
-   * @param data User login data
-   * @returns Promise with the login response
-   */
   signIn: async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await apiClient.put('/v1/auth/sign_in', data)
+    return response.data
+  },
+  
+  getUserInfo: async (): Promise<UserInfoResponse> => {
+    const response = await apiClient.get('/v1/users/infos')
     return response.data
   }
 }
