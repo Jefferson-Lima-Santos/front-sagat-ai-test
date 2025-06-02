@@ -376,13 +376,11 @@ onMounted(() => {
               <v-progress-circular indeterminate color="primary"></v-progress-circular>
             </div>
           </template>
-          
-          <template v-slot:footer v-if="!hasMore && hasStatements">
-            <div class="text-center py-3">
-              <div class="text-body-2 text-medium-emphasis">{{ t(tokens.admin.statements.noMoreData) }}</div>
-            </div>
-          </template>
         </v-infinite-scroll>
+
+        <div v-if="!hasMore && hasStatements && !showEmptyState" class="text-center py-3">
+          <div class="text-body-2 text-medium-emphasis">{{ t(tokens.admin.statements.noMoreData) }}</div>
+        </div>
         
         <div v-if="showEmptyState" class="text-center py-6">
           <v-icon icon="mdi-bank-off" size="large" class="mb-2"></v-icon>
