@@ -7,6 +7,7 @@ import { onMounted } from 'vue';
 const authStore = useAuthStore();
 const router = useRouter();
 
+// Verify authentication on mount
 onMounted(() => {
   if (!authStore.isAuthenticated) {
     router.push('/login');
@@ -19,28 +20,19 @@ onMounted(() => {
     <AdminNavbar />
     
     <v-main class="bg-grey-lighten-4">
-      <v-container fluid class="pa-4">
-        <slot></slot>
-      </v-container>
+      <router-view />
     </v-main>
   </v-layout>
 </template>
 
 <style scoped>
-.admin-layout {
-  min-height: 100vh;
-  background-color: #f8fafc;
+.v-main {
+  padding-left: 70px; /* Ajuste para o rail mode da navbar */
 }
 
-.admin-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .admin-content {
-    padding: 1.5rem 1rem;
+@media (max-width: 960px) {
+  .v-main {
+    padding-left: 0;
   }
 }
 </style>

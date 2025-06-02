@@ -134,6 +134,21 @@ export const tokens = {
     welcome: 'admin.welcome',
     welcomeMessage: 'admin.welcomeMessage',
     logout: 'admin.logout',
-    profile: 'admin.profile'
+    profile: 'admin.profile',
+    bankTransfer: {
+      newTransfer: 'admin.bankTransfer.newTransfer',
+      sourceAccount: 'admin.bankTransfer.sourceAccount',
+      destinationAccount: 'admin.bankTransfer.destinationAccount',
+      amount: 'admin.bankTransfer.amount',
+      transferType: 'admin.bankTransfer.transferType',
+      pix: 'admin.bankTransfer.pix',
+      ted: 'admin.bankTransfer.ted',
+      cancel: 'admin.bankTransfer.cancel',
+      transfer: 'admin.bankTransfer.transfer',
+      selectAccounts: 'admin.bankTransfer.selectAccounts',
+      invalidAmount: 'admin.bankTransfer.invalidAmount',
+      insufficientFunds: 'admin.bankTransfer.insufficientFunds',
+      transferFailed: 'admin.bankTransfer.transferFailed'
+    }
   }
 };

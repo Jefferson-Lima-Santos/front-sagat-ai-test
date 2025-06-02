@@ -83,4 +83,19 @@ export const en = {
   [tokens.auth.login.noAccount]: 'Don\'t have an account?',
   [tokens.auth.login.signUp]: 'Sign Up',
   [tokens.auth.login.invalidCredentials]: 'Invalid email or password',
+
+  // Bank transfer translations
+  [tokens.admin.bankTransfer.newTransfer]: 'New Transfer',
+  [tokens.admin.bankTransfer.sourceAccount]: 'Source Account',
+  [tokens.admin.bankTransfer.destinationAccount]: 'Destination Account',
+  [tokens.admin.bankTransfer.amount]: 'Amount',
+  [tokens.admin.bankTransfer.transferType]: 'Transfer Type',
+  [tokens.admin.bankTransfer.pix]: 'PIX',
+  [tokens.admin.bankTransfer.ted]: 'TED',
+  [tokens.admin.bankTransfer.cancel]: 'Cancel',
+  [tokens.admin.bankTransfer.transfer]: 'Transfer',
+  [tokens.admin.bankTransfer.selectAccounts]: 'Select source and destination accounts',
+  [tokens.admin.bankTransfer.invalidAmount]: 'Enter a valid transfer amount',
+  [tokens.admin.bankTransfer.insufficientFunds]: 'Insufficient funds for this transfer',
+  [tokens.admin.bankTransfer.transferFailed]: 'Transfer failed. Please try again.'
 }

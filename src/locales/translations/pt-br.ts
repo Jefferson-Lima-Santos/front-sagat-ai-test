@@ -83,4 +83,19 @@ export const ptBR = {
   [tokens.auth.login.noAccount]: 'Não tem uma conta?',
   [tokens.auth.login.signUp]: 'Cadastre-se',
   [tokens.auth.login.invalidCredentials]: 'E-mail ou senha inválidos',
+
+  // Bank transfer translations
+  [tokens.admin.bankTransfer.newTransfer]: 'Nova Transferência',
+  [tokens.admin.bankTransfer.sourceAccount]: 'Conta de origem',
+  [tokens.admin.bankTransfer.destinationAccount]: 'Conta de destino',
+  [tokens.admin.bankTransfer.amount]: 'Valor',
+  [tokens.admin.bankTransfer.transferType]: 'Tipo de transferência',
+  [tokens.admin.bankTransfer.pix]: 'PIX',
+  [tokens.admin.bankTransfer.ted]: 'TED',
+  [tokens.admin.bankTransfer.cancel]: 'Cancelar',
+  [tokens.admin.bankTransfer.transfer]: 'Transferir',
+  [tokens.admin.bankTransfer.selectAccounts]: 'Selecione as contas de origem e destino',
+  [tokens.admin.bankTransfer.invalidAmount]: 'Digite um valor válido para transferência',
+  [tokens.admin.bankTransfer.insufficientFunds]: 'Saldo insuficiente para esta transferência',
+  [tokens.admin.bankTransfer.transferFailed]: 'Falha ao realizar transferência. Tente novamente.'
 }

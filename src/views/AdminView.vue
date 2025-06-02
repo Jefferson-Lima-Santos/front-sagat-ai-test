@@ -1,134 +1,119 @@
 <script setup lang="ts">
+import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tokens } from '../locales/tokens';
 import { useAuthStore } from '../stores/auth';
+import { useBankAccountsStore } from '../stores/bankAccounts';
+import AccountCard from '../components/admin/AccountCard.vue';
+import NewTransferModal from '../components/admin/NewTransferModal.vue';
+import type { BankAccount } from '../api/bankAccounts';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
+const bankAccountsStore = useBankAccountsStore();
+
+const isLoading = ref(true);
+const transferModalOpen = ref(false);
+const selectedAccount = ref<BankAccount | undefined>(undefined);
+
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    await Promise.all([
+      bankAccountsStore.fetchAccounts(),
+      bankAccountsStore.fetchRecentTransfers(3)
+    ]);
+  } catch (error) {
+    console.error('Erro ao carregar dados do dashboard:', error);
+  } finally {
+    isLoading.value = false;
+  }
+});
+const openTransferModal = (account?: BankAccount) => {
+  selectedAccount.value = account;
+  transferModalOpen.value = true;
+};
+
+const handleTransferSuccess = () => {
+  bankAccountsStore.fetchAccounts();
+  bankAccountsStore.fetchRecentTransfers(3);
+};
 </script>
 
 <template>
-  <v-row>
-    <v-col cols="12">
-      <v-card flat class="mx-auto mt-4">
-        <v-card-title class="text-h4 mb-2">{{ t(tokens.admin.dashboard) }}</v-card-title>
-        
-        <v-card-text>
-          <v-row>
-            <v-col cols="12" md="8">
-              <v-card class="mb-4">
-                <v-card-item>
-                  <v-card-title>
-                    {{ t(tokens.admin.welcome) }}, {{ authStore.user?.name || 'Usuário' }}
-                  </v-card-title>
-                  <v-card-subtitle class="mt-2">
-                    {{ t(tokens.admin.welcomeMessage) }}
-                  </v-card-subtitle>
-                </v-card-item>
-              </v-card>
-              
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-card height="180" color="primary">
-                    <v-card-item>
-                      <v-card-title class="text-white">Quick Access</v-card-title>
-                    </v-card-item>
-                    <v-card-text class="text-white">
-                      Access frequently used features
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-                
-                <v-col cols="12" md="6">
-                  <v-card height="180" class="bg-indigo">
-                    <v-card-item>
-                      <v-card-title class="text-white">Statistics</v-card-title>
-                    </v-card-item>
-                    <v-card-text class="text-white">
-                      View your account statistics
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-col>
-            
-            <v-col cols="12" md="4">
-              <v-card class="mb-4">
-                <v-card-item>
-                  <v-card-title>Profile</v-card-title>
-                </v-card-item>
-                <v-card-text class="d-flex flex-column align-center">
-                  <v-avatar size="100" color="primary" class="mb-4">
-                    <span class="text-h4 text-white">
-                      {{ authStore.user?.name ? authStore.user.name.charAt(0).toUpperCase() : 'U' }}
-                    </span>
-                  </v-avatar>
-                  <div class="text-h6">{{ authStore.user?.name || 'User' }}</div>
-                  <div class="text-body-2 text-medium-emphasis">{{ authStore.user?.email || 'email@example.com' }}</div>
-                </v-card-text>
-                <v-card-actions>
-                  <v-btn block variant="outlined">Edit Profile</v-btn>
-                </v-card-actions>
-              </v-card>
-              
-              <v-card class="mb-4">
-                <v-list>
-                  <v-list-item prepend-icon="mdi-account-cog-outline">
-                    <v-list-item-title>Account Settings</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item prepend-icon="mdi-shield-account-outline">
-                    <v-list-item-title>Privacy</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item prepend-icon="mdi-bell-outline">
-                    <v-list-item-title>Notifications</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-card>
+  <div class="admin-dashboard">
+    <v-card flat class="mx-auto my-4 px-4 py-4">
+      <v-card-title class="text-h5 mb-4">{{ t(tokens.admin.dashboard) }}</v-card-title>
+
+      <v-card-text>
+        <v-card class="mb-6">
+          <v-card-item>
+            <v-card-title>
+              {{ t(tokens.admin.welcome) }}, {{ authStore.user?.name || 'Usuário' }}
+            </v-card-title>
+            <v-card-subtitle class="mt-2">
+              {{ t(tokens.admin.welcomeMessage) }}
+            </v-card-subtitle>
+          </v-card-item>
+        </v-card>
+
+
+        <div v-if="isLoading" class="d-flex justify-center py-8">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+            size="64"
+          ></v-progress-circular>
+        </div>
+
+        <div v-else>
+          <h2 class="text-h6 mb-4">Minhas Contas</h2>
+          
+          <v-alert
+            v-if="!bankAccountsStore.accounts || bankAccountsStore.accounts.length === 0"
+            type="info"
+            variant="tonal"
+            class="text-center"
+          >
+            <p class="mb-3">Você ainda não possui contas bancárias cadastradas.</p>
+            <v-btn color="primary">Adicionar Nova Conta</v-btn>
+          </v-alert>
+
+          <v-row v-else>
+            <v-col
+              v-for="account in bankAccountsStore.accounts"
+              :key="account.id"
+              cols="12"
+              md="6"
+              lg="4"
+            >
+              <AccountCard
+                :account="account"
+                :transfers="bankAccountsStore.recentTransfers.filter(t => 
+                  t.from_user_bank_account.account_number === account.account_number || 
+                  t.to_bank_account.account_number === account.account_number
+                )"
+                @new-transfer="openTransferModal(account)"
+              />
             </v-col>
           </v-row>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+        </div>
+      </v-card-text>
+    </v-card>
+
+    <NewTransferModal
+      :open="transferModalOpen"
+      :source-account="selectedAccount"
+      @close="transferModalOpen = false"
+      @success="handleTransferSuccess"
+    />
+  </div>
 </template>
 
 <style scoped>
 .admin-dashboard {
-  padding: 1rem 0;
-}
-
-.admin-title {
-  font-size: 1.75rem;
-  margin-bottom: 2rem;
-  color: var(--text-color);
-}
-
-.welcome-card {
-  background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.welcome-content h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.75rem;
-  color: var(--text-color);
-}
-
-.welcome-content p {
-  color: var(--subtitle-color);
-  line-height: 1.6;
-}
-
-@media (max-width: 768px) {
-  .admin-title {
-    font-size: 1.5rem;
-  }
-  
-  .welcome-card {
-    padding: 1.5rem;
-  }
+  max-width: 100%;
+  overflow-x: hidden;
+  padding: 16px;
 }
 </style>
