@@ -41,7 +41,7 @@ const getCurrentFlag = () => {
           variant="text"
           class="language-btn"
         >
-          <img :src="getCurrentFlag()" width="24" height="24" />
+          <img :src="getCurrentFlag()" width="auto" height="24" />
         </v-btn>
       </template>
       

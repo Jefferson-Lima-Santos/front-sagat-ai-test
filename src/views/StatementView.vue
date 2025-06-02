@@ -371,7 +371,6 @@ onMounted(() => {
             </div>
           </template>
 
-          <!-- Loading indicator for infinite scroll -->
           <template v-slot:loading>
             <div class="d-flex justify-center py-4">
               <v-progress-circular indeterminate color="primary"></v-progress-circular>
