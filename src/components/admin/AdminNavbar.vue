@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tokens } from '../../locales/tokens';
 import { useAuthStore } from '../../stores/auth';
@@ -18,7 +18,17 @@ const drawer = ref(!smAndDown.value);
 const rail = ref(false);
 const languageMenu = ref(false);
 
-const accountId = "000000000000"
+const drawerToggleIcon = computed(() => {
+  return drawer.value ? 'mdi-menu-open' : 'mdi-menu';
+});
+
+
+const emit = defineEmits(['update:drawer']);
+
+
+watch(drawer, (newValue) => {
+  emit('update:drawer', newValue);
+});
 
 watch(smAndDown, (newValue) => {
   if (!newValue) {
@@ -34,7 +44,6 @@ const handleLogout = () => {
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
 };
-
 
 const navigationItems = [
   { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/admin' },
@@ -62,6 +71,7 @@ const getCurrentLanguage = () => {
     :permanent="!smAndDown"
     :rail="rail && !smAndDown"
     @click="rail ? rail = false : null"
+    width="255"
   >
     <v-list-item
       :prepend-icon="rail ? 'mdi-menu' : undefined"
@@ -80,7 +90,7 @@ const getCurrentLanguage = () => {
         <v-btn
           v-if="!smAndDown"
           variant="text"
-          icon="mdi-chevron-left"
+          :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
           @click.stop="rail = !rail"
         ></v-btn>
         <v-btn
@@ -225,19 +235,19 @@ const getCurrentLanguage = () => {
 
   <v-btn
     v-if="smAndDown && !drawer"
-    icon="mdi-menu"
+    :icon="drawerToggleIcon"
     color="primary"
     class="drawer-toggle-btn"
     @click="toggleDrawer"
     position="fixed"
     location="top left"
-    style="margin: 8px"
+    style="margin: 8px; z-index: 1000;"
   ></v-btn>
   
 </template>
 
 <style scoped>
 .drawer-toggle-btn {
-  z-index: 10;
+  z-index: 1000;
 }
 </style>

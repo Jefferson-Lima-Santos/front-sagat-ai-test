@@ -2,37 +2,43 @@
 import AdminNavbar from '../components/admin/AdminNavbar.vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
+const isDrawerOpen = ref(false);
 
-// Verify authentication on mount
 onMounted(() => {
   if (!authStore.isAuthenticated) {
     router.push('/login');
   }
 });
+
+const updateDrawerState = (value: boolean) => {
+  isDrawerOpen.value = value;
+};
 </script>
 
 <template>
   <v-layout>
-    <AdminNavbar />
+    <AdminNavbar @update:drawer="updateDrawerState" />
     
-    <v-main class="bg-grey-lighten-4">
-      <router-view />
+    <v-main class="bg-grey-lighten-4 admin-main-content">
+      <div class="admin-content-wrapper">
+        <router-view />
+      </div>
     </v-main>
   </v-layout>
 </template>
 
 <style scoped>
-.v-main {
-  padding-left: 70px; /* Ajuste para o rail mode da navbar */
+.admin-main-content {
+  transition: padding-left 0.3s ease-in-out;
+  padding-left: var(--v-layout-left);
 }
 
-@media (max-width: 960px) {
-  .v-main {
-    padding-left: 0;
-  }
+.admin-content-wrapper {
+  padding: 16px;
 }
+
 </style>
