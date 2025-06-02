@@ -1,237 +1,243 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tokens } from '../../locales/tokens';
 import { useAuthStore } from '../../stores/auth';
 import { useRouter } from 'vue-router';
+import { useDisplay } from 'vuetify';
+import FlagPTBR from '@/assets/flags/flag-pt-br.png'
+import FlagUK from '@/assets/flags/flag-uk.png'
 
-const { t } = useI18n();
+
+const { t, locale } = useI18n();
 const authStore = useAuthStore();
 const router = useRouter();
+const { smAndDown } = useDisplay();
 
-const isDropdownOpen = ref(false);
+const drawer = ref(!smAndDown.value);
+const rail = ref(false);
+const languageMenu = ref(false);
 
-const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value;
-};
+const accountId = "000000000000"
 
-const closeDropdown = () => {
-  isDropdownOpen.value = false;
-};
+watch(smAndDown, (newValue) => {
+  if (!newValue) {
+    drawer.value = false;
+  }
+});
 
 const handleLogout = () => {
   authStore.logout();
-  router.push('/login');
+  router.push('/');
 };
 
-const dropdownRef = ref<HTMLDivElement | null>(null);
-
-const handleClickOutside = (event: MouseEvent) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
-    closeDropdown();
-  }
+const toggleDrawer = () => {
+  drawer.value = !drawer.value;
 };
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
 
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
+const navigationItems = [
+  { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/admin' },
+];
+
+const languages = [
+  { code: 'ptBR', label: 'Português (Brasil)', icon: FlagPTBR },
+  { code: 'en', label: 'English', icon: FlagUK },
+];
+
+const changeLanguage = (langCode: string) => {
+  locale.value = langCode;
+  languageMenu.value = false;
+};
+
+const getCurrentLanguage = () => {
+  return languages.find(lang => lang.code === locale.value) || languages[0];
+};
 </script>
 
 <template>
-  <nav class="admin-navbar">
-    <div class="admin-navbar-container">
-      <router-link to="/admin" class="logo-link">
-        <img alt="Sagat logo" class="logo" src="../../assets/sagat-icon.png" />
-        <span class="admin-title">SAGAT Admin</span>
-      </router-link>
+  <v-navigation-drawer
+    v-model="drawer"
+    :temporary="smAndDown"
+    :permanent="!smAndDown"
+    :rail="rail && !smAndDown"
+    @click="rail ? rail = false : null"
+  >
+    <v-list-item
+      :prepend-icon="rail ? 'mdi-menu' : undefined"
+      :title="rail ? undefined : 'SAGAT Admin'"
+      nav
+    >
+      <template v-slot:prepend>
+        <v-img
+          v-if="!rail"
+          src="../../assets/sagat-icon.png"
+          max-width="40"
+          class="mr-3"
+        ></v-img>
+      </template>
+      <template v-slot:append>
+        <v-btn
+          v-if="!smAndDown"
+          variant="text"
+          icon="mdi-chevron-left"
+          @click.stop="rail = !rail"
+        ></v-btn>
+        <v-btn
+          v-else
+          variant="text"
+          icon="mdi-close"
+          @click.stop="drawer = false"
+        ></v-btn>
+      </template>
+    </v-list-item>
 
-      <div class="admin-navbar-right">
-        <div class="avatar-container" ref="dropdownRef">
-          <button @click="toggleDropdown" class="avatar-button">
-            <div class="avatar">
-              {{ authStore.user?.name ? authStore.user.name.charAt(0).toUpperCase() : 'U' }}
-            </div>
-          </button>
+    <v-divider></v-divider>
 
-          <div v-if="isDropdownOpen" class="dropdown-menu">
-            <div class="dropdown-user-info">
-              <div class="dropdown-avatar">
-                {{ authStore.user?.name ? authStore.user.name.charAt(0).toUpperCase() : 'U' }}
-              </div>
-              <div class="dropdown-user-details">
-                <span class="user-name">{{ authStore.user?.name || 'User' }}</span>
-                <span class="user-email">{{ authStore.user?.email || 'email@example.com' }}</span>
-              </div>
-            </div>
-            <div class="dropdown-divider"></div>
-            <button @click="handleLogout" class="dropdown-item logout-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-              </svg>
-              <span>{{ t(tokens.admin.logout) }}</span>
-            </button>
-          </div>
-        </div>
+    <v-list-item v-if="!rail">
+      <template v-slot:prepend>
+        <v-avatar size="24">
+          <v-img :src="getCurrentLanguage().icon" alt="Language" />
+        </v-avatar>
+      </template>
+      <v-list-item-title>{{ getCurrentLanguage().label }}</v-list-item-title>
+      <template v-slot:append>
+        <v-menu
+          v-model="languageMenu"
+          location="end"
+          :close-on-content-click="true"
+        >
+          <template v-slot:activator="{ props }">
+            <v-btn
+              icon="mdi-chevron-down"
+              variant="text"
+              size="small"
+              v-bind="props"
+            ></v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="(lang, i) in languages"
+              :key="i"
+              @click="changeLanguage(lang.code)"
+            >
+              <template v-slot:prepend>
+                <v-avatar size="24">
+                  <v-img :src="lang.icon" alt="Language flag" />
+                </v-avatar>
+              </template>
+              <v-list-item-title>{{ lang.label }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+    </v-list-item>
+
+    <v-divider v-if="!rail"></v-divider>
+
+    <v-list density="compact" nav>
+      <v-list-item
+        v-for="(item, i) in navigationItems"
+        :key="i"
+        :value="item"
+        :to="item.to"
+        color="primary"
+      >
+        <template v-slot:prepend>
+          <v-icon :icon="item.icon"></v-icon>
+        </template>
+
+        <v-list-item-title v-text="item.title"></v-list-item-title>
+      </v-list-item>
+    </v-list>
+    
+    <template v-slot:append>
+      <div class="pa-2 d-flex justify-center" v-if="rail">
+        <v-menu v-model="languageMenu" location="end">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              icon
+              v-bind="props"
+              size="small"
+            >
+              <v-avatar size="24">
+                <v-img :src="getCurrentLanguage().icon" alt="Language" />
+              </v-avatar>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="(lang, i) in languages"
+              :key="i"
+              @click="changeLanguage(lang.code)"
+            >
+              <template v-slot:prepend>
+                <v-avatar size="24">
+                  <v-img :src="lang.icon" alt="Language flag" />
+                </v-avatar>
+              </template>
+              <v-list-item-title>{{ lang.label }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
-    </div>
-  </nav>
+      
+      <v-divider></v-divider>
+      <v-list v-if="rail">
+        <v-list-item @click="handleLogout" color="error">
+          <template v-slot:prepend>
+            <v-icon icon="mdi-logout" size="small"></v-icon>
+          </template>
+          <v-list-item-title>{{ t(tokens.admin.logout) }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+      
+      
+      <v-list v-if="!rail">
+        <v-list-item >
+          <template v-slot:prepend>
+            <v-avatar size="40" color="primary">
+              <span class="text-h6 text-white">
+                {{ authStore.user?.name ? authStore.user.name.charAt(0).toUpperCase() : 'U' }}
+              </span>
+            </v-avatar>
+          </template>
+          <v-list-item-title class="font-weight-bold">
+            {{ authStore.user?.name || 'User' }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ authStore.user?.email || 'email@example.com' }}
+          </v-list-item-subtitle>
+        </v-list-item>
+        
+        <v-list density="compact">
+          
+          <v-list-item @click="handleLogout" color="error">
+            <template v-slot:prepend>
+              <v-icon icon="mdi-logout" size="small"></v-icon>
+            </template>
+            <v-list-item-title>{{ t(tokens.admin.logout) }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-list>
+    </template>
+  </v-navigation-drawer>
+
+  <v-btn
+    v-if="smAndDown && !drawer"
+    icon="mdi-menu"
+    color="primary"
+    class="drawer-toggle-btn"
+    @click="toggleDrawer"
+    position="fixed"
+    location="top left"
+    style="margin: 8px"
+  ></v-btn>
+  
 </template>
 
 <style scoped>
-.admin-navbar {
-  background-color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  padding: 0.75rem 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.admin-navbar-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: var(--text-color);
-}
-
-.logo {
-  height: 40px;
-  width: auto;
-}
-
-.admin-title {
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin-left: 0.75rem;
-}
-
-.admin-navbar-right {
-  display: flex;
-  align-items: center;
-}
-
-.avatar-container {
-  position: relative;
-}
-
-.avatar-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  width: 240px;
-  padding: 0.75rem 0;
+.drawer-toggle-btn {
   z-index: 10;
-}
-
-.dropdown-user-info {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1rem;
-}
-
-.dropdown-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-right: 0.75rem;
-}
-
-.dropdown-user-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-weight: 600;
-  color: var(--text-color);
-  font-size: 0.95rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-email {
-  color: var(--subtitle-color);
-  font-size: 0.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dropdown-divider {
-  height: 1px;
-  background-color: #e2e8f0;
-  margin: 0.5rem 0;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-color);
-  transition: background-color 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: #f8f9fa;
-}
-
-.icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 0.75rem;
-}
-
-.logout-button {
-  color: #e53e3e;
 }
 </style>

@@ -1,27 +1,10 @@
 <script setup lang="ts">
-import Header from './components/Header.vue'
-import Footer from './components/Footer.vue'
-import { tokens } from './locales/tokens'
-import { useI18n } from 'vue-i18n'
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-
-const { t, locale } = useI18n()
-const route = useRoute()
-
-// Verifica se estamos em uma rota administrativa
-const isAdminRoute = computed(() => {
-  return route.path.startsWith('/admin')
-})
+// Removidos os imports dos componentes que agora são gerenciados pelos layouts
 </script>
 
 <template>
   <v-app>
-    <Header v-if="!isAdminRoute" />
-    <v-main>
-      <router-view />
-    </v-main>
-    <Footer v-if="!isAdminRoute" />
+    <router-view />
   </v-app>
 </template>
 

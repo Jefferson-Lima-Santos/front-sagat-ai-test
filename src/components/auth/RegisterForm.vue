@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useForm } from 'vee-validate'
-import * as yup from 'yup'
 import { useI18n } from 'vue-i18n'
 import { tokens } from '../../locales/tokens'
-import { Motion } from 'motion-v'
+import { useAuthStore } from '../../stores/auth'
 import { useRouter } from 'vue-router'
+import type { SignUpRequest } from '../../api/auth'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 const router = useRouter()
 const isSubmitting = ref(false)
 const showPassword = ref(false)
-const registrationSuccess = ref(false)
+const submitSuccess = ref(false)
 
 const schema = yup.object({
   fullName: yup.string()
@@ -28,7 +30,7 @@ const schema = yup.object({
     .oneOf([yup.ref('password')], t(tokens.auth.validation.passwordMatch))
 })
 
-const { handleSubmit, values, errors, defineField } = useForm({
+const { handleSubmit, values, errors } = useForm({
   validationSchema: schema,
   initialValues: {
     fullName: '',
@@ -38,352 +40,260 @@ const { handleSubmit, values, errors, defineField } = useForm({
   }
 })
 
-const [fullName, fullNameProps] = defineField('fullName')
-const [email, emailProps] = defineField('email')
-const [password, passwordProps] = defineField('password')
-const [confirmPassword, confirmPasswordProps] = defineField('confirmPassword')
-
 const onSubmit = handleSubmit(async (values) => {
   isSubmitting.value = true
   
   try {
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    const userData: SignUpRequest = {
+      user: {
+        name: values.fullName,
+        email: values.email,
+        password: values.password
+      }
+    }
     
-    registrationSuccess.value = true
+    await authStore.registerUser(userData)
+    submitSuccess.value = true
     
+    // Redirect to admin page after a brief delay
     setTimeout(() => {
-      router.push('/login')
-    }, 3000)
+      router.push('/admin')
+    }, 1500)
   } catch (error) {
     console.error('Registration error:', error)
   } finally {
     isSubmitting.value = false
   }
 })
-
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
-}
 </script>
 
 <template>
-  <div class="register-container">
-    <div class="register-form-card">
-      <Motion
-        :initial="{ opacity: 0, y: 20 }"
-        :animate="{ opacity: 1, y: 0 }"
-        :transition="{ duration: 0.5 }"
-      >
-        <div class="form-header">
-          <h1>{{ t(tokens.auth.register.title) }}</h1>
-          <p>{{ t(tokens.auth.register.subtitle) }}</p>
-        </div>
-      </Motion>
-      <Motion v-if="registrationSuccess"
-        :initial="{ opacity: 0, scale: 0.9 }"
-        :animate="{ opacity: 1, scale: 1 }"
-        :transition="{ duration: 0.4 }"
-        class="success-message"
-      >
-        <div class="success-icon">✓</div>
-        <h2>{{ t(tokens.auth.register.success) }}</h2>
-        <p>{{ t(tokens.auth.register.successMessage) }}</p>
-      </Motion>
-      <Motion v-else
-        :initial="{ opacity: 0 }"
-        :animate="{ opacity: 1 }"
-        :transition="{ duration: 0.5, delay: 0.2 }"
-      >
-        <form @submit.prevent="onSubmit" class="register-form">
-          <div class="form-group">
-            <label for="fullName">{{ t(tokens.auth.register.fullName) }}</label>
-            <input 
-              type="text" 
-              id="fullName" 
-              v-model="fullName"
-              v-bind="fullNameProps"
-              :class="{ error: errors.fullName }"
-              :placeholder="t(tokens.auth.register.fullNamePlaceholder)"
-            />
-            <p v-if="errors.fullName" class="error-message">{{ errors.fullName }}</p>
-          </div>
-
-          <div class="form-group">
-            <label for="email">{{ t(tokens.auth.register.email) }}</label>
-            <input 
-              type="email" 
-              id="email"
-              v-model="email"
-              v-bind="emailProps"  
-              :class="{ error: errors.email }"
-              :placeholder="t(tokens.auth.register.emailPlaceholder)"
-            />
-            <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
-          </div>
-
-          <div class="form-group">
-            <label for="password">{{ t(tokens.auth.register.password) }}</label>
-            <div class="password-input-wrapper">
-              <input 
-                :type="showPassword ? 'text' : 'password'" 
-                id="password"
-                v-model="password"
-                v-bind="passwordProps"
-                :class="{ error: errors.password }"
-                :placeholder="t(tokens.auth.register.passwordPlaceholder)"
-              />
-              <button 
-                type="button" 
-                class="toggle-password" 
-                @click="togglePasswordVisibility" 
-                tabindex="-1"
-              >
-                <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </button>
-            </div>
-            <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
-          </div>
-
-          <div class="form-group">
-            <label for="confirmPassword">{{ t(tokens.auth.register.confirmPassword) }}</label>
-            <div class="password-input-wrapper">
-              <input 
-                :type="showPassword ? 'text' : 'password'"
-                id="confirmPassword"
-                v-model="confirmPassword"
-                v-bind="confirmPasswordProps"
-                :class="{ error: errors.confirmPassword }"
-                :placeholder="t(tokens.auth.register.confirmPasswordPlaceholder)"
-              />
-            </div>
-            <p v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</p>
-          </div>
-
-          <button 
-            type="submit" 
-            class="submit-btn" 
-            :disabled="isSubmitting"
-          >
-            <span v-if="isSubmitting" class="loader"></span>
-            <span>{{ isSubmitting ? t(tokens.auth.register.submitting) : t(tokens.auth.register.submit) }}</span>
-          </button>
-
-          <div class="login-link">
-            {{ t(tokens.auth.register.alreadyHaveAccount) }}
-            <router-link to="/login">{{ t(tokens.auth.register.login) }}</router-link>
-          </div>
-        </form>
-      </Motion>
-    </div>
-  </div>
+  <v-container fluid class="fill-height bg-grey-lighten-4">
+    <v-row align="center" justify="center">
+      <v-col cols="12" sm="10" md="8" lg="6" xl="5">
+        <v-card
+          class="mx-auto"
+          min-width="320px"
+          max-width="600px"
+          :elevation="4"
+        >
+          <v-card-title class="text-center pt-6 pb-0">
+            <h1 class="text-h4 font-weight-bold">{{ t(tokens.auth.register.title) }}</h1>
+            <p class="text-subtitle-1 text-medium-emphasis mt-2">{{ t(tokens.auth.register.subtitle) }}</p>
+          </v-card-title>
+          
+          <v-card-text class="pa-6 pt-4">
+            <v-fade-transition>
+              <div v-if="submitSuccess" class="text-center py-6">
+                <v-icon color="success" size="80" icon="mdi-check-circle-outline"></v-icon>
+                <h2 class="text-h5 font-weight-bold mt-4">{{ t(tokens.auth.register.success) }}</h2>
+                <p class="mt-2 text-medium-emphasis">{{ t(tokens.auth.register.successMessage) }}</p>
+              </div>
+              
+              <v-form v-else @submit.prevent="onSubmit">
+                <v-row>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="values.fullName"
+                      :label="t(tokens.auth.register.fullName)"
+                      :placeholder="t(tokens.auth.register.fullNamePlaceholder)"
+                      :error-messages="errors.fullName"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-account-outline"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="values.email"
+                      :label="t(tokens.auth.register.email)"
+                      :placeholder="t(tokens.auth.register.emailPlaceholder)"
+                      :error-messages="errors.email"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-email-outline"
+                      type="email"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="values.password"
+                      :label="t(tokens.auth.register.password)"
+                      :placeholder="t(tokens.auth.register.passwordPlaceholder)"
+                      :error-messages="errors.password"
+                      :type="showPassword ? 'text' : 'password'"
+                      :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-lock-outline"
+                      required
+                      @click:append-inner="showPassword = !showPassword"
+                    ></v-text-field>
+                  </v-col>
+                  
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="values.confirmPassword"
+                      :label="t(tokens.auth.register.confirmPassword)"
+                      :placeholder="t(tokens.auth.register.confirmPasswordPlaceholder)"
+                      :error-messages="errors.confirmPassword"
+                      :type="showPassword ? 'text' : 'password'"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-lock-check-outline"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  
+                  <v-col cols="12">
+                    <v-btn
+                      type="submit"
+                      color="primary"
+                      size="large"
+                      block
+                      :loading="isSubmitting"
+                    >
+                      {{ isSubmitting ? t(tokens.auth.register.submitting) : t(tokens.auth.register.submit) }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                
+                <div class="text-center mt-4">
+                  <span class="text-medium-emphasis">{{ t(tokens.auth.register.alreadyHaveAccount) }}</span>
+                  <router-link to="/login" class="text-decoration-none font-weight-medium ml-1">
+                    {{ t(tokens.auth.register.login) }}
+                  </router-link>
+                </div>
+              </v-form>
+            </v-fade-transition>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style scoped>
-.register-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.fill-height {
   min-height: 100vh;
-  padding: 2rem 1rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
 }
 
-.register-form-card {
-  width: 100%;
-  max-width: 500px;
-  background-color: #fff;
-  border-radius: var(--border-radius);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  padding: 2.5rem;
+.bg-grey-lighten-4 {
+  background-color: #f5f7fa !important;
+}
+
+.mx-auto {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.text-h4 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.font-weight-bold {
+  font-weight: 700;
+}
+
+.text-subtitle-1 {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-medium-emphasis {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.py-6 {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+}
+
+.pa-6 {
+  padding: 1.5rem !important;
+}
+
+.pt-4 {
+  padding-top: 1rem !important;
+}
+
+.pb-0 {
+  padding-bottom: 0 !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.v-card {
+  border-radius: 0.5rem;
   overflow: hidden;
 }
 
-.form-header {
-  text-align: center;
-  margin-bottom: 2rem;
+.v-card-title {
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.form-header h1 {
-  color: var(--text-color);
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-}
-
-.form-header p {
-  color: var(--subtitle-color);
-  font-size: 1rem;
-  margin: 0;
-}
-
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  color: var(--text-color);
-  font-weight: 500;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.form-group input {
-  height: 3rem;
-  padding: 0 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(66, 185, 131, 0.1);
-}
-
-.form-group input.error {
-  border-color: #e53e3e;
-}
-
-.error-message {
-  margin-top: 0.5rem;
-  color: #e53e3e;
-  font-size: 0.8rem;
-  margin-bottom: 0;
-}
-
-.password-input-wrapper {
+.v-card-text {
   position: relative;
 }
 
-.toggle-password {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: none;
-  color: #718096;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+.v-fade-transition {
+  transition: opacity 0.4s ease;
 }
 
-.toggle-password:focus {
-  outline: none;
+.v-icon {
+  font-size: 2.5rem;
 }
 
-.submit-btn {
-  height: 3rem;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
+.v-text-field {
+  margin-bottom: 1.5rem;
+}
+
+.v-btn {
+  text-transform: none;
   border-radius: 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
 }
 
-.submit-btn:hover {
-  background-color: #36996b;
+.v-btn:disabled {
+  background-color: #e0e0e0;
+  color: #a0a0a0;
 }
 
-.submit-btn:disabled {
-  background-color: #9de0c3;
-  cursor: not-allowed;
+.v-btn.loading {
+  position: relative;
 }
 
-.login-link {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: var(--subtitle-color);
-}
-
-.login-link a {
-  color: var(--primary-color);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.login-link a:hover {
-  text-decoration: underline;
-}
-
-.loader {
-  width: 18px;
-  height: 18px;
-  border: 2px solid #fff;
-  border-bottom-color: transparent;
+.v-btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
   border-radius: 50%;
-  display: inline-block;
-  animation: rotation 1s linear infinite;
+  animation: spin 0.6s linear infinite;
 }
 
-.success-message {
-  text-align: center;
-  padding: 2rem 0;
-}
-
-.success-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  background-color: rgba(66, 185, 131, 0.1);
-  border-radius: 50%;
-  font-size: 30px;
-  color: var(--primary-color);
-  margin: 0 auto 1.5rem;
-}
-
-.success-message h2 {
-  color: var(--text-color);
-  margin-bottom: 0.75rem;
-}
-
-.success-message p {
-  color: var(--subtitle-color);
-  max-width: 360px;
-  margin: 0 auto;
-}
-
-@keyframes rotation {
+@keyframes spin {
   0% {
-    transform: rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg);
   }
   100% {
-    transform: rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 
 @media (max-width: 640px) {
-  .register-form-card {
-    padding: 2rem 1.5rem;
+  .v-card {
+    padding: 1rem;
+  }
+  
+  .text-h4 {
+    font-size: 1.25rem;
   }
 }
 </style>

@@ -1,135 +1,151 @@
 <script setup lang="ts">
 import LanguageSwitch from './LanguageSwitch.vue'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { tokens } from '../locales/tokens'
+import { useDisplay } from 'vuetify'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const { mdAndDown } = useDisplay()
 
-// Detectar tamanho da tela para responsividade
-const isMobile = ref(false)
+const drawer = ref(false)
+const isScrolled = ref(false)
 
-const checkScreenSize = () => {
-  isMobile.value = window.innerWidth < 900
+watch(mdAndDown, (newValue) => {
+  if (!newValue) {
+    drawer.value = false
+  }
+})
+
+const checkScroll = () => {
+  isScrolled.value = window.scrollY > 20
 }
 
 onMounted(() => {
-  checkScreenSize()
-  window.addEventListener('resize', checkScreenSize)
+  window.addEventListener('scroll', checkScroll)
+  checkScroll()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', checkScreenSize)
+  window.removeEventListener('scroll', checkScroll)
 })
+
+const getCurrentLanguage = () => {
+  return locale.value === 'ptBR' ? 'Português' : 'English'
+}
+
+const getCurrentLanguageFlag = () => {
+  return locale.value === 'ptBR' ? '/assets/flags/flag-pt-br.png' : '/assets/flags/flag-uk.png'
+}
 </script>
 
 <template>
-  <header class="header">
-    <div class="header-content">
-      <router-link to="/" class="logo-link">
-        <img 
-          alt="Sagat logo" 
-          class="logo" 
-          src="../assets/sagat-icon.png" 
-          :class="{ mobile: isMobile }"
+  <div>
+    <v-navigation-drawer
+      v-model="drawer"
+      temporary
+      location="right"
+    >
+      <v-list-item class="mt-4">
+        <v-list-item-title class="text-h6">SAGAT AI</v-list-item-title>
+      </v-list-item>
+      
+      <v-divider class="my-2"></v-divider>
+      
+      <v-list density="compact" nav>
+        <v-list-item
+          prepend-icon="mdi-home-outline"
+          title="Home"
+          to="/"
+        ></v-list-item>
+        
+        <v-list-item
+          prepend-icon="mdi-account-outline"
+          :title="t(tokens.header.login)"
+          to="/login"
+        ></v-list-item>
+        
+        <v-list-item
+          prepend-icon="mdi-account-plus-outline"
+          :title="t(tokens.header.signup)"
+          to="/register"
+        ></v-list-item>
+      </v-list>
+      
+      <template v-slot:append>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item>
+            <template v-slot:prepend>
+              <v-avatar size="24" class="me-2">
+                <v-img :src="getCurrentLanguageFlag()" alt="Language flag" />
+              </v-avatar>
+            </template>
+            <v-list-item-title>{{ getCurrentLanguage() }}</v-list-item-title>
+            <template v-slot:append>
+              <LanguageSwitch />
+            </template>
+          </v-list-item>
+        </v-list>
+      </template>
+    </v-navigation-drawer>
+
+    <v-app-bar
+      :elevation="isScrolled ? 1 : 0"
+      color="white"
+      class="px-4 py-2"
+      height="70"
+      :class="{ 'scrolled-header': isScrolled }"
+    >
+      <router-link to="/" class="d-flex align-center text-decoration-none">
+        <img
+          alt="Sagat logo"
+          class="mr-2"
+          src="../assets/sagat-icon.png"
+          height="40"
         />
       </router-link>
-      <div class="header-actions">
-        <router-link to="/login" class="header-btn login">{{ t(tokens.header.login) }}</router-link>
-        <router-link to="/register" class="header-btn signup">{{ t(tokens.header.signup) }}</router-link>
+
+      <v-spacer></v-spacer>
+      
+      <div v-if="!mdAndDown" class="d-flex align-center">
+        <v-btn
+          variant="outlined"
+          to="/login"
+          class="mr-3"
+          rounded="md"
+          color="grey-darken-1"
+          size="large"
+        >
+          {{ t(tokens.header.login) }}
+        </v-btn>
+        
+        <v-btn
+          variant="elevated"
+          to="/register"
+          class="mr-4"
+          color="primary"
+          rounded="md"
+          size="large"
+        >
+          {{ t(tokens.header.signup) }}
+        </v-btn>
+        
         <LanguageSwitch />
       </div>
-    </div>
-  </header>
+      
+      <div v-else>
+        <v-btn icon @click.stop="drawer = !drawer">
+          <v-icon>mdi-menu</v-icon>
+        </v-btn>
+      </div>
+    </v-app-bar>
+  </div>
 </template>
 
 <style scoped>
-.header {
-  width: 100%;
-  background: #fff;
-  padding: 1rem 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.logo-link {
-  display: block;
-  text-decoration: none;
-}
-
-.logo {
-  height: 80px;
-  width: auto;
-  display: block;
-  transition: height 0.3s ease;
-}
-
-.logo.mobile {
-  height: 40px;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.header-btn {
-  border: none;
-  background: transparent;
-  font-size: 1rem;
-  padding: 0.5rem 1.1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;
-  text-decoration: none;
-}
-
-.header-btn.login {
-  color: #222;
-}
-
-.header-btn.signup {
-  background: var(--primary-color);
-  color: #fff;
-  font-weight: bold;
-}
-
-.header-btn.signup:hover {
-  background: #36996b;
-}
-
-.header-btn.login:hover {
-  background: #f0f4f8;
-}
-
-/* Responsive styles */
-@media (max-width: 900px) {
-  .header-content {
-    padding: 0 1rem;
-  }
-  
-  .header-actions {
-    gap: 0.5rem;
-  }
-  
-  .header-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .header-btn.login {
-    display: none;
-  }
+.scrolled-header {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.9) !important;
 }
 </style>

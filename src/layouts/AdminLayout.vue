@@ -15,12 +15,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="admin-layout">
+  <v-layout>
     <AdminNavbar />
-    <main class="admin-content">
-      <slot></slot>
-    </main>
-  </div>
+    
+    <v-main class="bg-grey-lighten-4">
+      <v-container fluid class="pa-4">
+        <slot></slot>
+      </v-container>
+    </v-main>
+  </v-layout>
 </template>
 
 <style scoped>

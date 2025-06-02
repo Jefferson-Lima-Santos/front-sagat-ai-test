@@ -128,9 +128,20 @@ const togglePasswordVisibility = () => {
         <v-card 
           class="register-form-container mx-auto pa-4" 
           elevation="8"
-          min-width="440px"
+          min-width="320px"
           max-width="550px"
         >
+          <div class="d-flex justify-space-between align-center mb-2">
+            <v-btn 
+              icon="mdi-arrow-left" 
+              variant="text" 
+              color="primary" 
+              to="/" 
+              title="Voltar à página inicial"
+            ></v-btn>
+            <div></div>
+          </div>
+          
           <v-card-title class="text-center text-h4 mb-2">
             {{ t(tokens.auth.register.title) }}
           </v-card-title>

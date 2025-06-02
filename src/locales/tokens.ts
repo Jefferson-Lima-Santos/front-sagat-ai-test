@@ -93,6 +93,19 @@ export const tokens = {
       success: 'auth.register.success',
       successMessage: 'auth.register.successMessage'
     },
+    login: {
+      title: 'auth.login.title',
+      subtitle: 'auth.login.subtitle',
+      email: 'auth.login.email',
+      emailPlaceholder: 'auth.login.emailPlaceholder',
+      password: 'auth.login.password',
+      passwordPlaceholder: 'auth.login.passwordPlaceholder',
+      submit: 'auth.login.submit',
+      forgotPassword: 'auth.login.forgotPassword',
+      noAccount: 'auth.login.noAccount',
+      signUp: 'auth.login.signUp',
+      invalidCredentials: 'auth.login.invalidCredentials'
+    },
     validation: {
       nameRequired: 'auth.validation.nameRequired',
       emailRequired: 'auth.validation.emailRequired',
