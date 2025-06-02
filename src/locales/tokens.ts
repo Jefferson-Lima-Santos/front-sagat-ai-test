@@ -135,6 +135,18 @@ export const tokens = {
     welcomeMessage: 'admin.welcomeMessage',
     logout: 'admin.logout',
     profile: 'admin.profile',
+    bankAccount: {
+      currentAccount: 'admin.bankAccount.currentAccount',
+      savingsAccount: 'admin.bankAccount.savingsAccount',
+      accountHolder: 'admin.bankAccount.accountHolder',
+      accountNumber: 'admin.bankAccount.accountNumber',
+      availableBalance: 'admin.bankAccount.availableBalance',
+      recentTransactions: 'admin.bankAccount.recentTransactions',
+      noRecentTransactions: 'admin.bankAccount.noRecentTransactions',
+      to: 'admin.bankAccount.to',
+      from: 'admin.bankAccount.from',
+      transferFailed: 'admin.bankAccount.transferFailed'
+    },
     bankTransfer: {
       newTransfer: 'admin.bankTransfer.newTransfer',
       sourceAccount: 'admin.bankTransfer.sourceAccount',

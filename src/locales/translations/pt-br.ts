@@ -83,8 +83,6 @@ export const ptBR = {
   [tokens.auth.login.noAccount]: 'Não tem uma conta?',
   [tokens.auth.login.signUp]: 'Cadastre-se',
   [tokens.auth.login.invalidCredentials]: 'E-mail ou senha inválidos',
-
-  // Bank transfer translations
   [tokens.admin.bankTransfer.newTransfer]: 'Nova Transferência',
   [tokens.admin.bankTransfer.sourceAccount]: 'Conta de origem',
   [tokens.admin.bankTransfer.destinationAccount]: 'Conta de destino',
@@ -97,5 +95,15 @@ export const ptBR = {
   [tokens.admin.bankTransfer.selectAccounts]: 'Selecione as contas de origem e destino',
   [tokens.admin.bankTransfer.invalidAmount]: 'Digite um valor válido para transferência',
   [tokens.admin.bankTransfer.insufficientFunds]: 'Saldo insuficiente para esta transferência',
-  [tokens.admin.bankTransfer.transferFailed]: 'Falha ao realizar transferência. Tente novamente.'
+  [tokens.admin.bankTransfer.transferFailed]: 'Falha ao realizar transferência. Tente novamente.',
+  [tokens.admin.bankAccount.currentAccount]: 'Conta Corrente',
+  [tokens.admin.bankAccount.savingsAccount]: 'Conta Poupança',
+  [tokens.admin.bankAccount.accountHolder]: 'Titular',
+  [tokens.admin.bankAccount.accountNumber]: 'Conta',
+  [tokens.admin.bankAccount.availableBalance]: 'Saldo disponível',
+  [tokens.admin.bankAccount.recentTransactions]: 'Últimas transações',
+  [tokens.admin.bankAccount.noRecentTransactions]: 'Nenhuma transação recente',
+  [tokens.admin.bankAccount.to]: 'Para',
+  [tokens.admin.bankAccount.from]: 'De',
+  [tokens.admin.bankAccount.transferFailed]: 'Transferência falhou'
 }

@@ -83,8 +83,6 @@ export const en = {
   [tokens.auth.login.noAccount]: 'Don\'t have an account?',
   [tokens.auth.login.signUp]: 'Sign Up',
   [tokens.auth.login.invalidCredentials]: 'Invalid email or password',
-
-  // Bank transfer translations
   [tokens.admin.bankTransfer.newTransfer]: 'New Transfer',
   [tokens.admin.bankTransfer.sourceAccount]: 'Source Account',
   [tokens.admin.bankTransfer.destinationAccount]: 'Destination Account',
@@ -97,5 +95,15 @@ export const en = {
   [tokens.admin.bankTransfer.selectAccounts]: 'Select source and destination accounts',
   [tokens.admin.bankTransfer.invalidAmount]: 'Enter a valid transfer amount',
   [tokens.admin.bankTransfer.insufficientFunds]: 'Insufficient funds for this transfer',
-  [tokens.admin.bankTransfer.transferFailed]: 'Transfer failed. Please try again.'
+  [tokens.admin.bankTransfer.transferFailed]: 'Transfer failed. Please try again.',
+  [tokens.admin.bankAccount.currentAccount]: 'Checking Account',
+  [tokens.admin.bankAccount.savingsAccount]: 'Savings Account',
+  [tokens.admin.bankAccount.accountHolder]: 'Account Holder',
+  [tokens.admin.bankAccount.accountNumber]: 'Account Number',
+  [tokens.admin.bankAccount.availableBalance]: 'Available Balance',
+  [tokens.admin.bankAccount.recentTransactions]: 'Recent Transactions',
+  [tokens.admin.bankAccount.noRecentTransactions]: 'No recent transactions',
+  [tokens.admin.bankAccount.to]: 'To',
+  [tokens.admin.bankAccount.from]: 'From',
+  [tokens.admin.bankAccount.transferFailed]: 'Transfer failed'
 }

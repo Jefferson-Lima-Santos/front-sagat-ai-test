@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { tokens } from '@/locales/tokens'
 import type { BankAccount, BankAccountTransfer } from '@/api/bankAccounts'
 
+const { t } = useI18n()
 const props = defineProps<{
   account: BankAccount
   transfers: BankAccountTransfer[]
@@ -57,24 +60,24 @@ const formattedAccountNumber = computed(() => {
     <v-card-item>
       <v-card-title>{{ account.bank_name }}</v-card-title>
       <v-card-subtitle class="pb-0">
-        {{ account.account_type === 'corrente' ? 'Conta Corrente' : 'Conta Poupança' }}
+        {{ account.account_type === 'corrente' ? t('admin.bankAccount.currentAccount') : t('admin.bankAccount.savingsAccount') }}
       </v-card-subtitle>
       
       <div class="mt-3">
         <v-row>
           <v-col cols="6">
-            <div class="text-caption text-medium-emphasis mb-1">Titular</div>
+            <div class="text-caption text-medium-emphasis mb-1">{{ t('admin.bankAccount.accountHolder') }}</div>
             <div class="text-body-2 font-weight-medium">{{ account.holder_name }}</div>
           </v-col>
           <v-col cols="6">
-            <div class="text-caption text-medium-emphasis mb-1">Conta</div>
+            <div class="text-caption text-medium-emphasis mb-1">{{ t('admin.bankAccount.accountNumber') }}</div>
             <div class="text-body-2 font-weight-medium">{{ formattedAccountNumber }}</div>
           </v-col>
         </v-row>
         
         <v-row class="mt-3">
           <v-col cols="12">
-            <div class="text-caption text-medium-emphasis mb-1">Saldo disponível</div>
+            <div class="text-caption text-medium-emphasis mb-1">{{ t('admin.bankAccount.availableBalance') }}</div>
             <div class="text-h6 font-weight-bold" :class="account.amount > 0 ? 'text-success' : 'text-error'">
               {{ formatCurrency(account.amount) }}
             </div>
@@ -86,11 +89,11 @@ const formattedAccountNumber = computed(() => {
     <v-divider></v-divider>
     
     <v-card-text class="pt-4">
-      <div class="text-subtitle-2 font-weight-medium mb-3">Últimas transações</div>
+      <div class="text-subtitle-2 font-weight-medium mb-3">{{ t('admin.bankAccount.recentTransactions') }}</div>
       
       <div v-if="transfers.length === 0" class="text-center py-4 text-medium-emphasis">
         <v-icon icon="mdi-bank-transfer" size="large" class="mb-2"></v-icon>
-        <div>Nenhuma transação recente</div>
+        <div>{{ t('admin.bankAccount.noRecentTransactions') }}</div>
       </div>
       
       <v-list v-else density="compact">
@@ -118,11 +121,11 @@ const formattedAccountNumber = computed(() => {
           
           <v-list-item-subtitle>
             <span v-if="transfer.was_success">
-              {{ isOutgoingTransfer(transfer) ? 'Para' : 'De' }}
+              {{ isOutgoingTransfer(transfer) ? t('admin.bankAccount.to') : t('admin.bankAccount.from') }}
               {{ isOutgoingTransfer(transfer) ? transfer.to_bank_account.holder_name : transfer.from_user_bank_account.holder_name }}
             </span>
             <span v-else class="text-error text-caption">
-              Transferência falhou
+              {{ t('admin.bankAccount.transferFailed') }}
             </span>
           </v-list-item-subtitle>
           
@@ -143,7 +146,7 @@ const formattedAccountNumber = computed(() => {
           prepend-icon="mdi-bank-transfer-out"
           @click="emit('new-transfer', account)"
         >
-          Nova transferência
+          {{ t('admin.bankTransfer.newTransfer') }}
         </v-btn>
       </div>
     </v-card-text>
