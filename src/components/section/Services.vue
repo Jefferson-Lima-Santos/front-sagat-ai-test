@@ -44,7 +44,7 @@ const services = ref([
         <SectionTitle :title="t(tokens.services.title)" />
       </Motion>
       
-      <v-row>
+      <v-row class="mt-6" justify="center">
         <v-col 
           v-for="(service, index) in services" 
           :key="service.titleToken"

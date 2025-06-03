@@ -182,7 +182,7 @@ onMounted(() => {
       
       <v-card-text>
         <v-row>
-          <v-col cols="12" md="6" lg="3">
+          <v-col cols="12" md="6" lg="3" class="filter-col">
             <v-menu
               v-model="datePickerConfig.startMenuOpen"
               :close-on-content-click="false"
@@ -205,7 +205,7 @@ onMounted(() => {
             </v-menu>
           </v-col>
           
-          <v-col cols="12" md="6" lg="3">
+          <v-col cols="12" md="6" lg="3" class="filter-col">
             <v-menu
               v-model="datePickerConfig.endMenuOpen"
               :close-on-content-click="false"
@@ -228,7 +228,7 @@ onMounted(() => {
             </v-menu>
           </v-col>
           
-          <v-col cols="12" md="6" lg="2">
+          <v-col cols="12" md="6" lg="2" class="filter-col">
             <v-text-field
               v-model="filters.min_value"
               type="number"
@@ -240,7 +240,7 @@ onMounted(() => {
             ></v-text-field>
           </v-col>
           
-          <v-col cols="12" md="6" lg="2">
+          <v-col cols="12" md="6" lg="2" class="filter-col">
             <v-text-field
               v-model="filters.max_value"
               type="number"
@@ -252,10 +252,10 @@ onMounted(() => {
             ></v-text-field>
           </v-col>
           
-          <v-col cols="12" md="6" lg="2">
+          <v-col cols="12" md="6" lg="2" class="filter-col">
             <v-select
               v-model="filters.transfer_type"
-              :items="[
+              :items=" [
                 { title: t(tokens.admin.statements.all), value: '' },
                 { title: t(tokens.admin.statements.sent), value: 'sent' },
                 { title: t(tokens.admin.statements.received), value: 'received' }
@@ -305,8 +305,8 @@ onMounted(() => {
           <template v-for="(transfer, index) in statements" :key="transfer.id">
             <div :class="['pa-4', index % 2 === 0 ? 'bg-grey-lighten-3' : '']">
               <v-row align="center">
-                <v-col cols="12" sm="2">
-                  <div class="d-flex align-center">
+                <v-col cols="12" sm="2" class="text-center justify-center">
+                  <div class="d-flex align-center justify-center">
                     <v-avatar
                       :color="getTransferClass(transfer)"
                       size="36"
@@ -314,7 +314,7 @@ onMounted(() => {
                     >
                       <v-icon
                         :icon="isOutgoingTransfer(transfer) ? 'mdi-arrow-up' : 'mdi-arrow-down'"
-                        color="white"
+                        :color="isOutgoingTransfer(transfer) ? 'red' : 'black'"
                       ></v-icon>
                     </v-avatar>
                     <div>
@@ -328,7 +328,7 @@ onMounted(() => {
                   </div>
                 </v-col>
                 
-                <v-col cols="12" sm="4">
+                <v-col cols="12" sm="4" class="text-center justify-center">
                   <div class="text-subtitle-2">
                     {{ t(tokens.admin.statements.fromAccount) }}:
                   </div>
@@ -341,7 +341,7 @@ onMounted(() => {
                   </div>
                 </v-col>
                 
-                <v-col cols="12" sm="4">
+                <v-col cols="12" sm="4" class="text-center justify-center">
                   <div class="text-subtitle-2">
                     {{ t(tokens.admin.statements.toAccount) }}:
                   </div>
@@ -354,7 +354,7 @@ onMounted(() => {
                   </div>
                 </v-col>
                 
-                <v-col cols="12" sm="2">
+                <v-col cols="12" sm="2" class="justify-center text-center">
                   <v-chip
                     :color="transfer.was_success ? 'success' : 'error'"
                     text-color="white"
@@ -410,5 +410,21 @@ onMounted(() => {
 
 .statements-scroll {
   width: 100%;
+}
+
+.filter-col {
+  min-width: 300px;
+  max-width: 100%;
+  flex: 1 1 300px;
+  padding-right: 8px;
+  padding-left: 8px;
+  box-sizing: border-box;
+}
+@media (max-width: 960px) {
+  .filter-col {
+    min-width: 100% !important;
+    padding-right: 0;
+    padding-left: 0;
+  }
 }
 </style>

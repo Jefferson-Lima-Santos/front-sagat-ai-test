@@ -239,8 +239,11 @@ const togglePasswordVisibility = () => {
 
 <style scoped>
 .register-view {
-  background-color: var(--background-light);
   min-height: calc(100vh - 140px);
+  background: 
+    linear-gradient(120deg, rgba(240,243,249,0) 60%, rgba(220,225,235,0.95) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 @media (max-width: 600px) {

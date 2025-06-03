@@ -53,7 +53,7 @@ const togglePasswordVisibility = () => {
 </script>
 
 <template>
-  <v-container fluid class="fill-height bg-grey-lighten-4">
+  <v-container fluid class="fill-height login-view">
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="6" lg="4">
         <v-card 
@@ -157,3 +157,13 @@ const togglePasswordVisibility = () => {
     </v-row>
   </v-container>
 </template>
+
+<style scoped>
+  .login-view {
+    min-height: calc(100vh - 140px);
+    background: 
+      linear-gradient(120deg, rgba(240,243,249,0) 60%, rgba(220,225,235,0.95) 100%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+</style>

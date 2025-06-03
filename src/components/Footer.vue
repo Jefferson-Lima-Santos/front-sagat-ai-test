@@ -91,14 +91,23 @@ const resourceItems: FooterResourceKey[] = ['blog', 'documentation', 'faq']
             t(tokens.footer.allRightsReserved) }}</p>
         </v-col>
         <v-col cols="12" sm="6" class="d-flex justify-end">
-          <v-btn v-for="(link, i) in [
-            { icon: 'mdi-linkedin', url: 'https://www.linkedin.com/company/sagat-engenharia/' },
-            { icon: 'mdi-facebook', url: 'https://www.facebook.com/sagatengenharia' },
-            { icon: 'mdi-instagram', url: 'https://www.instagram.com/sagatengenharia/' },
-            { icon: 'mdi-youtube', url: 'https://www.youtube.com/@sagatengenharia4007' }
-          ]" :key="i" :href="link.url" target="_blank" variant="text" icon size="small" color="grey-darken-1"
-            class="mx-1">
-            <v-icon>{{ link.icon }}</v-icon>
+          <v-btn
+            v-for="(link, i) in [
+              { icon: 'mdi-linkedin', url: 'https://www.linkedin.com/company/sagat-engenharia/' },
+              { icon: 'mdi-facebook', url: 'https://www.facebook.com/sagatengenharia' },
+              { icon: 'mdi-instagram', url: 'https://www.instagram.com/sagatengenharia/' },
+              { icon: 'mdi-youtube', url: 'https://www.youtube.com/@sagatengenharia4007' }
+            ]"
+            :key="i"
+            :href="link.url"
+            target="_blank"
+            variant="text"
+            icon
+            size="small"
+            color="grey-darken-1"
+            class="mx-1 social-icon-btn"
+          >
+            <v-icon class="social-icon">{{ link.icon }}</v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -110,5 +119,13 @@ const resourceItems: FooterResourceKey[] = ['blog', 'documentation', 'faq']
 .custom-divider {
   border-color: var(--primary-color) !important;
   opacity: 1;
+}
+
+/* Social icon hover effect */
+.social-icon-btn .social-icon {
+  transition: color 0.2s;
+}
+.social-icon-btn:hover .social-icon {
+  color: #1976d2 !important; /* Azul padrão Vuetify, ajuste se quiser outra cor */
 }
 </style>

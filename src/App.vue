@@ -3,7 +3,7 @@ import Toast from 'primevue/toast';
 </script>
 
 <template>
-  <v-app>
+  <v-app class="app-background">
     <router-view />
     <Toast position="top-right" />
   </v-app>
@@ -37,5 +37,15 @@ p {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+}
+
+.app-background {
+  min-height: 100vh;
+  background: 
+    linear-gradient(rgba(255,255,255,0), rgba(255,255,255,-1)),
+    url('https://img.freepik.com/vetores-gratis/fundo-branco-com-padroes-de-triangulo_1017-18410.jpg?semt=ais_items_boosted&w=740') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
 }
 </style>

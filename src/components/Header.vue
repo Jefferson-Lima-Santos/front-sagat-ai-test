@@ -115,7 +115,7 @@ const getCurrentLanguageFlag = () => {
           class="mr-3"
           rounded="md"
           color="grey-darken-1"
-          size="large"
+          size="small"
         >
           {{ t(tokens.header.login) }}
         </v-btn>
@@ -126,7 +126,7 @@ const getCurrentLanguageFlag = () => {
           class="mr-4"
           color="primary"
           rounded="md"
-          size="large"
+          size="small"
         >
           {{ t(tokens.header.signup) }}
         </v-btn>

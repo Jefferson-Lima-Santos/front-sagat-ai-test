@@ -89,17 +89,16 @@ export const bankAccountsApi = {
       max_value,
       transfer_type 
     } = filters
-    
+
+    const params: Record<string, any> = { per_page, page }
+    if (start_date) params.start_date = start_date
+    if (end_date) params.end_date = end_date
+    if (min_value) params.min_value = min_value
+    if (max_value) params.max_value = max_value
+    if (transfer_type) params.transfer_type = transfer_type
+
     const response = await apiClient.get('/v1/users/bank_account_transfers/statements', {
-      params: { 
-        per_page, 
-        page,
-        start_date,
-        end_date,
-        min_value,
-        max_value,
-        transfer_type
-      }
+      params
     })
     return response.data
   },
