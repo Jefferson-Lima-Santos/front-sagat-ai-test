@@ -11,9 +11,6 @@ const isLoadingMore = ref(false);
 const statements = ref<BankAccountTransfer[]>([]);
 const totalPages = ref(1);
 const currentPage = ref(1);
-const hasMore = computed(() => {
-  return currentPage.value < totalPages.value;
-});
 
 const filters = reactive<{
   start_date: string;
@@ -43,22 +40,21 @@ const hasStatements = computed(() => statements.value.length > 0);
 
 const showEmptyState = computed(() => !hasStatements.value && !loading.value);
 
+const infiniteScrollKey = ref(0);
+
 async function loadMore(options: { side: string; done: (status: 'ok' | 'empty' | 'error') => void }) {
   const { done } = options;
   
-
   if (loading.value) {
     done('ok');
     return;
   }
   
-
-  if (!hasMore.value) {
+  if (currentPage.value >= totalPages.value) {
     done('empty');
     return;
   }
   
-
   if (isLoadingMore.value) {
     done('ok');
     return;
@@ -68,27 +64,20 @@ async function loadMore(options: { side: string; done: (status: 'ok' | 'empty' |
     isLoadingMore.value = true;
     loading.value = true;
     
-
     currentPage.value++;
     filters.page = currentPage.value;
     
-
     const response = await bankAccountsApi.getTransfers(filters);
     
-
     if (response.bank_account_transfers && response.bank_account_transfers.length > 0) {
       statements.value = [...statements.value, ...response.bank_account_transfers];
     }
     
-
     totalPages.value = response.total_pages;
     
-
-    if (currentPage.value >= totalPages.value) {
-
+    if (currentPage.value >= response.total_pages) {
       done('empty');
     } else {
-
       done('ok');
     }
   } catch (error) {
@@ -96,10 +85,7 @@ async function loadMore(options: { side: string; done: (status: 'ok' | 'empty' |
     done('error');
   } finally {
     loading.value = false;
-
-    setTimeout(() => {
-      isLoadingMore.value = false;
-    }, 300);
+    isLoadingMore.value = false;
   }
 }
 
@@ -113,11 +99,11 @@ async function fetchStatements() {
   try {
     const response = await bankAccountsApi.getTransfers(filters);
     
-
     statements.value = response.bank_account_transfers || [];
     totalPages.value = response.total_pages || 1;
     currentPage.value = response.current_page || 1;
     
+    infiniteScrollKey.value++;
   } catch (error) {
     console.error('Error fetching statements:', error);
   } finally {
@@ -297,6 +283,7 @@ onMounted(() => {
         
         <v-infinite-scroll 
           v-if="!showEmptyState"
+          :key="infiniteScrollKey"
           height="500"
           :items="statements"
           @load="loadMore"
@@ -376,12 +363,14 @@ onMounted(() => {
               <v-progress-circular indeterminate color="primary"></v-progress-circular>
             </div>
           </template>
+
+          <template v-slot:empty>
+            <div class="text-center py-3" v-if="hasStatements">
+              <div class="text-body-2 text-medium-emphasis">{{ t(tokens.admin.statements.noMoreData) }}</div>
+            </div>
+          </template>
         </v-infinite-scroll>
 
-        <div v-if="!hasMore && hasStatements && !showEmptyState" class="text-center py-3">
-          <div class="text-body-2 text-medium-emphasis">{{ t(tokens.admin.statements.noMoreData) }}</div>
-        </div>
-        
         <div v-if="showEmptyState" class="text-center py-6">
           <v-icon icon="mdi-bank-off" size="large" class="mb-2"></v-icon>
           <div class="text-body-1">{{ t(tokens.admin.statements.noTransfers) }}</div>
